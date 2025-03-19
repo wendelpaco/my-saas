@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
   try {
     const preference = new Preference(mpClient);
 
+    console.log(`${process.env.NOTIFICATION_URL}/api/mercado-pago/webhook`);
+
     const createdPreference = await preference.create({
       body: {
         external_reference: userId,
@@ -21,7 +23,9 @@ export async function POST(req: NextRequest) {
         ...(userEmail && {
           payer: {
             email: userEmail,
-          },
+            first_name: "Wendel",
+            last_name: "Santos",
+          } as any,
         }),
 
         items: [
@@ -45,9 +49,8 @@ export async function POST(req: NextRequest) {
           failure: `${req.headers.get("origin")}/?status=falha`,
           pending: `${req.headers.get("origin")}/api/mercado-pago/pending`,
         },
-
-        // 🔔 Adicionando a URL do Webhook
         notification_url: `${process.env.NOTIFICATION_URL}/api/mercado-pago/webhook`,
+        binary_mode: true,
       },
     });
 

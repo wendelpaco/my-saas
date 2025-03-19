@@ -10,7 +10,7 @@ export async function handleMercadoPagoPayment(paymentData: PaymentResponse) {
   const price = metadata.price;
   // Faz alguma ação aqui - manda email pro usuario, libera acesso, erc.
 
-  console.log("LOG => ", userEmail, price);
+  console.log("handleMercadoPagoPayment => ", userEmail, price);
   // await sendPaymentConfirmation(userEmail, paymentData.transaction_amount!)
 
   return;

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
           paymentData.status === "approved" || // Pagamento por cartão OU
           paymentData.date_approved !== null // Pagamento por Pix
         ) {
-          console.log("LOG =>", paymentData);
+          console.log("POST =>", paymentData);
           await handleMercadoPagoPayment(paymentData);
         }
         break;
