@@ -4,7 +4,8 @@ import mpClient from "@/app/lib/mercado-pago";
 import { TCheckoutData } from "@/app/@types";
 
 export async function POST(req: NextRequest) {
-  const { userId, userEmail, produtct }: TCheckoutData = await req.json();
+  const { userId, userEmail, produtct, firstName, lastName }: TCheckoutData =
+    await req.json();
 
   try {
     const preference = new Preference(mpClient);
@@ -24,9 +25,8 @@ export async function POST(req: NextRequest) {
         ...(userEmail && {
           payer: {
             email: userEmail,
-            first_name: "Wendel",
-            last_name: "Santos",
-          } as any,
+            name: `Wendel Santos`,
+          },
         }),
 
         items: [
