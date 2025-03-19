@@ -1,71 +1,45 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Preference } from "mercadopago";
-import mpClient from "@/app/lib/mercado-pago";
-import { TCheckoutData } from "@/app/@types";
+// app/api/mercadopago-webhook/route.js
 
-export async function POST(req: NextRequest) {
-  const { userId, userEmail, produtct, firstName, lastName }: TCheckoutData =
-    await req.json();
+import { NextResponse } from "next/server";
+import { Payment } from "mercadopago";
+import mpClient, { verifyMercadoPagoSignature } from "@/app/lib/mercado-pago";
+import { handleMercadoPagoPayment } from "@/app/server/mercado-pago/handle-payment";
 
+export async function POST(request: Request) {
   try {
-    const preference = new Preference(mpClient);
+    console.log("chegou aqui");
+    verifyMercadoPagoSignature(request);
 
-    console.log("iniciando rota de webhook");
+    const body = await request.json();
 
-    const createdPreference = await preference.create({
-      body: {
-        external_reference: userId,
-        metadata: {
-          teste_id: userId,
-          user_email: userEmail,
-          plan: produtct.planId,
-          price: produtct.price,
-        },
+    const { type, data } = body;
 
-        // Enviar os campos 'first_name' e 'last_name'
-        payer: {
-          email: userEmail,
-          name: `${firstName} ${lastName}`,
-        },
-
-        items: [
-          {
-            id: produtct.planId,
-            description: produtct.description,
-            title: produtct.title,
-            quantity: 1,
-            unit_price: 0.01,
-            currency_id: "BRL",
-            category_id: "category",
-          },
-        ],
-        payment_methods: {
-          excluded_payment_types: [{ id: "debit_card" }, { id: "credit_card" }],
-          installments: 12,
-        },
-        auto_return: "approved",
-        back_urls: {
-          success: `${req.headers.get("origin")}/?status=sucesso`,
-          failure: `${req.headers.get("origin")}/?status=falha`,
-          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`,
-        },
-        notification_url: `https://my-saas.vercel.app/api/mercado-pago/webhook`,
-
-        // Configuração do campo binary_mode
-        binary_mode: true, // Resposta imediata da transação
-      },
-    });
-
-    if (!createdPreference.id) {
-      throw new Error("No preferenceID");
+    switch (type) {
+      case "payment":
+        const payment = new Payment(mpClient);
+        const paymentData = await payment.get({ id: data.id });
+        if (
+          paymentData.status === "approved" || // Pagamento por cartão OU
+          paymentData.date_approved !== null // Pagamento por Pix
+        ) {
+          console.log("POST => approved", paymentData.binary_mode);
+          await handleMercadoPagoPayment(paymentData);
+        }
+        break;
+      // case "subscription_preapproval": Eventos de assinatura
+      //   console.log("Subscription preapproval event");
+      //   console.log(data);
+      //   break;
+      default:
+        console.log("Unhandled event type:", type);
     }
 
-    return NextResponse.json({
-      preferenceId: createdPreference.id,
-      initPoint: createdPreference.init_point,
-    });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.error();
+    return NextResponse.json({ received: true }, { status: 200 });
+  } catch (error) {
+    console.error("Error handling webhook:", error);
+    return NextResponse.json(
+      { error: "Webhook handler failed" },
+      { status: 500 }
+    );
   }
 }
