@@ -2,6 +2,8 @@ export type TCheckoutData = {
   userId: string;
   userEmail: string;
   produtct: TProduct;
+  firstName?: string;
+  lastName?: string;
 };
 
 export type TProduct = {
