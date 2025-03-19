@@ -1,9 +1,9 @@
-import NextAuth, { getServerSession, NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/app/lib/prisma";
 import bcrypt from "bcrypt";
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt", // ✅ Necessário para NextAuth v5+
   },
@@ -80,5 +80,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET, // Certifique-se de definir isso no `.env.local`
 };
 
+// Apenas exporte o handler para GET e POST
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

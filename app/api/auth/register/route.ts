@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import prisma from "@/app/lib/prisma";
-import { IUser } from "@/app/@types";
+import { TUser } from "@/app/@types";
 
 // Método para registrar um usuário
 export async function POST(req: NextRequest) {
   // Receber dados da requisição
-  const { email, password, name }: IUser = await req.json();
+  const { email, password, name }: TUser = await req.json();
 
   // Verificar se os dados estão presentes
   if (!email || !password || !name) {

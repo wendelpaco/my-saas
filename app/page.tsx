@@ -1,12 +1,13 @@
 "use client";
 
-import { useMercadoPago } from "./hooks/useMercadoPago";
+// import { useMercadoPago } from "./hooks/useMercadoPago";
 
 export default function Home() {
-  const { createMercadoPagoCheckout } = useMercadoPago();
+  // const { createMercadoPagoCheckout } = useMercadoPago();
   return (
     <div className="flex justify-center items-center h-screen">
-      <button
+      <h1>teste</h1>
+      {/* <button
         onClick={() =>
           createMercadoPagoCheckout({
             userId: "123",
@@ -17,7 +18,7 @@ export default function Home() {
         className="bg-blue-500 text-white px-4 py-2 rounded-md"
       >
         Comprar
-      </button>
+      </button> */}
     </div>
   );
 }
