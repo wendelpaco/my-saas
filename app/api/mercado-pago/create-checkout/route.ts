@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
         ...(userEmail && {
           payer: {
             email: userEmail,
-            name: `Wendel Santos`,
+            name: `Wendel`,
+            surname: `Silva`,
           },
         }),
 

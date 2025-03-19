@@ -11,7 +11,7 @@ export async function handleMercadoPagoPayment(paymentData: PaymentResponse) {
   // Faz alguma ação aqui - manda email pro usuario, libera acesso, erc.
 
   console.log("handleMercadoPagoPayment => ", userEmail, price);
-  // await sendPaymentConfirmation(userEmail, paymentData.transaction_amount!)
+  await sendPaymentConfirmation(userEmail, paymentData.transaction_amount!);
 
   return;
 }
