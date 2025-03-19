@@ -1,9 +1,9 @@
 "use client";
 
-// import { useMercadoPago } from "./hooks/useMercadoPago";
+import { useMercadoPago } from "./hooks/useMercadoPago";
 
 export default function Home() {
-  // const { createMercadoPagoCheckout } = useMercadoPago();
+  const { createMercadoPagoCheckout } = useMercadoPago();
   return (
     <div className="flex justify-center items-center h-screen">
       <h1>teste</h1>
