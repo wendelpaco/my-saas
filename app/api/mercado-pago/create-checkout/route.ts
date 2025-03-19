@@ -11,9 +11,9 @@ export async function POST(req: NextRequest) {
 
     const createdPreference = await preference.create({
       body: {
-        external_reference: userId, // IMPORTANTE: Isso aumenta a pontuação da sua integração com o Mercado Pago - É o id da compra no nosso sistema
+        external_reference: userId,
         metadata: {
-          teste_id: userId, // O Mercado Pago converte para snake_case, ou seja, testeId vai virar teste_id
+          teste_id: userId,
           user_email: userEmail,
           plan: produtct.planId,
           price: produtct.price,
@@ -32,35 +32,22 @@ export async function POST(req: NextRequest) {
             quantity: 1,
             unit_price: 0.01,
             currency_id: "BRL",
-            category_id: "category", // Recomendado inserir, mesmo que não tenha categoria - Aumenta a pontuação da sua integração com o Mercado Pago
+            category_id: "category",
           },
         ],
         payment_methods: {
-          // Descomente para desativar métodos de pagamento
-          //   excluded_payment_methods: [
-          //     {
-          //       id: "bolbradesco",
-          //     },
-          //     {
-          //       id: "pec",
-          //     },
-          //   ],
-          excluded_payment_types: [
-            {
-              id: "debit_card",
-            },
-            {
-              id: "credit_card",
-            },
-          ],
-          installments: 12, // Número máximo de parcelas permitidas - calculo feito automaticamente
+          excluded_payment_types: [{ id: "debit_card" }, { id: "credit_card" }],
+          installments: 12,
         },
         auto_return: "approved",
         back_urls: {
           success: `${req.headers.get("origin")}/?status=sucesso`,
           failure: `${req.headers.get("origin")}/?status=falha`,
-          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`, // Criamos uma rota para lidar com pagamentos pendentes
+          pending: `${req.headers.get("origin")}/api/mercado-pago/pending`,
         },
+
+        // 🔔 Adicionando a URL do Webhook
+        notification_url: `${process.env.NOTIFICATION_URL}/api/mercado-pago/webhook`,
       },
     });
 
