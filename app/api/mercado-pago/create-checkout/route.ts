@@ -10,8 +10,7 @@ export async function POST(req: NextRequest) {
   try {
     const preference = new Preference(mpClient);
 
-    console.log("iniciando rota de create-checkout");
-    console.log(`${process.env.NOTIFICATION_URL}/api/mercado-pago/webhook`);
+    console.log("CREATE-CHECKOUT !");
 
     const createdPreference = await preference.create({
       body: {
