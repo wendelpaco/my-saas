@@ -26,12 +26,12 @@ async function sendToWebhook(paymentData: PaymentResponse) {
 }
 
 export async function handleMercadoPagoPayment(paymentData: PaymentResponse) {
-  const { id, teste_id, user_email } = paymentData.metadata;
+  const { teste_id } = paymentData.metadata;
 
   await prisma.payment.create({
     data: {
       userId: teste_id,
-      transactionId: id,
+      transactionId: paymentData.id?.toString()!,
       status: paymentData.status!,
       amount: paymentData.transaction_amount!,
       paymentMethod: paymentData.payment_method_id!,
