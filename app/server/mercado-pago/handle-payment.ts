@@ -2,8 +2,7 @@ import "server-only";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { sendPaymentConfirmation } from "@/app/lib/email";
 
-const webhookUrl =
-  "https://webhook.cool/at/tangy-musician-47/dwNiHdPaax2x4A-nOBag28yzwmkQmZLd";
+const webhookUrl = "https://tangy-musician-47.webhook.cool";
 
 async function sendToWebhook(paymentData: PaymentResponse) {
   try {
