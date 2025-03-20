@@ -10,8 +10,6 @@ export async function POST(req: NextRequest) {
   try {
     const preference = new Preference(mpClient);
 
-    console.log("CREATE-CHECKOUT !");
-
     const createdPreference = await preference.create({
       body: {
         external_reference: userId,

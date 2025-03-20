@@ -1,5 +1,3 @@
-// app/api/mercadopago-webhook/route.js
-
 import { NextResponse } from "next/server";
 import { Payment } from "mercadopago";
 import mpClient, { verifyMercadoPagoSignature } from "@/app/lib/mercado-pago";
@@ -8,7 +6,6 @@ import { handleMercadoPagoPayment } from "@/app/server/mercado-pago/handle-payme
 export async function POST(request: Request) {
   try {
     verifyMercadoPagoSignature(request);
-    console.log("WEBHOOK => POST");
 
     const body = await request.json();
 
@@ -22,7 +19,6 @@ export async function POST(request: Request) {
           paymentData.status === "approved" || // Pagamento por cartão OU
           paymentData.date_approved !== null // Pagamento por Pix
         ) {
-          console.log("POST => approved", paymentData.binary_mode);
           await handleMercadoPagoPayment(paymentData);
         }
         break;

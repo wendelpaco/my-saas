@@ -1,6 +1,7 @@
 import "server-only";
 import { PaymentResponse } from "mercadopago/dist/clients/payment/commonTypes";
 import { sendPaymentConfirmation } from "@/app/lib/email";
+import prisma from "@/app/lib/prisma";
 
 const webhookUrl = "https://tangy-musician-47.webhook.cool";
 
@@ -25,11 +26,17 @@ async function sendToWebhook(paymentData: PaymentResponse) {
 }
 
 export async function handleMercadoPagoPayment(paymentData: PaymentResponse) {
-  const metadata = paymentData.metadata;
-  const userEmail = metadata.user_email;
-  const price = metadata.price;
+  const { id, teste_id, user_email } = paymentData.metadata;
 
-  console.log("handleMercadoPagoPayment => ", userEmail, price);
+  await prisma.payment.create({
+    data: {
+      userId: teste_id,
+      transactionId: id,
+      status: paymentData.status!,
+      amount: paymentData.transaction_amount!,
+      paymentMethod: paymentData.payment_method_id!,
+    },
+  });
 
   // Enviar e-mail para o usuário
   // await sendPaymentConfirmation(userEmail, paymentData.transaction_amount!);
