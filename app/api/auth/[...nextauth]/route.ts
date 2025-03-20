@@ -9,16 +9,11 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
+      // Não é necessário consultar o banco novamente. Use os dados já disponíveis do `user`.
       if (user) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-        });
-
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.isSuperAdmin = dbUser.isSuperAdmin;
-          token.id = dbUser.id;
-        }
+        token.id = user.id; // Usando o ID que foi retornado do `authorize`
+        token.role = user.role;
+        token.isSuperAdmin = user.isSuperAdmin;
       }
       return token;
     },
@@ -26,7 +21,7 @@ const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.role = token.role as string;
         session.user.isSuperAdmin = token.isSuperAdmin as boolean;
-        session.user.id = token.id as string;
+        session.user.id = token.id as string; // Atribui o ID do token à sessão
       }
       return session;
     },
@@ -35,7 +30,6 @@ const authOptions: NextAuthOptions = {
         const newUrl = url.split("?callbackUrl=")[0]; // Remove o callbackUrl da URL
         return newUrl; // Retorna a URL sem o parâmetro callbackUrl
       }
-
       return url; // Se não tiver callbackUrl, retorne o redirecionamento padrão
     },
   },
@@ -69,7 +63,14 @@ const authOptions: NextAuthOptions = {
         );
         if (!passwordMatch) throw new Error("Senha incorreta!");
 
-        return { id: user.id, email: user.email, name: user.name };
+        // Retorna diretamente os dados do usuário
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          isSuperAdmin: user.isSuperAdmin,
+        };
       },
     }),
   ],
