@@ -7,8 +7,8 @@ import { handleMercadoPagoPayment } from "@/app/server/mercado-pago/handle-payme
 
 export async function POST(request: Request) {
   try {
-    console.log("chegou aqui");
     verifyMercadoPagoSignature(request);
+    console.log("WEBHOOK => POST");
 
     const body = await request.json();
 
