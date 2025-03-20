@@ -28,9 +28,19 @@ async function sendToWebhook(paymentData: PaymentResponse) {
 export async function handleMercadoPagoPayment(paymentData: PaymentResponse) {
   const { teste_id } = paymentData.metadata;
 
+  const user = await prisma.user.findUnique({
+    where: {
+      id: teste_id, // ID do usuário logado que você passou no metadata
+    },
+  });
+
+  if (!user) {
+    throw new Error(`Usuário com ID ${teste_id} não encontrado`);
+  }
+
   await prisma.payment.create({
     data: {
-      userId: teste_id,
+      userId: user.id,
       transactionId: paymentData.id?.toString()!,
       status: paymentData.status!,
       amount: paymentData.transaction_amount!,
